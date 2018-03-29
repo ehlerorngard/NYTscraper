@@ -1,4 +1,16 @@
 .save-btn {
   float: right;
-  color: #e74944;
+  color: navy;
+  font-family: "Oswald", sans;
+  border: 2px solid gray;
+  border-radius: 4px;
+  padding: 6px;
+  margin: 4px;
+}
+.save-btn:hover {
+	background-color: lightgray;
+}
+.save-btn:visited {
+	background-color: green;
+	color: green;
 }

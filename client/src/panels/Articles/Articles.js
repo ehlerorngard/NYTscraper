@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
+import "./Articles.css";
 
 class Articles extends Component {
   state = {
@@ -18,30 +19,32 @@ class Articles extends Component {
 
   componentDidMount() {
     this.scrapeNYT();
-    this.loadSavedArticles
+    this.loadSavedArticles();
   }
 
   scrapeNYT = () => {
     API.scrape()
-      .then(res =>
+      .then(res => {
+        console.log("res = ", res);
         this.setState({ scraped_articles: res.data, heading: "", body: "" });
         console.log("this.state.scraped_articles = ", this.state.scraped_articles);
-      )
+      })
       .catch(err => console.log(err));
   };
 
   loadSavedArticles = () => {
     API.getArticles()
-      .then(res =>
+      .then(res => {
         this.setState({ saved_articles: res.data, heading: "", body: "" });
         console.log("this.state.saved_articles = ", this.state.saved_articles);
-      )
+      })
       .catch(err => console.log(err));
   };
 
   deleteArticle = id => {
+    console.log("id to be deleted: ", id);
     API.deleteArticle(id)
-      .then(res => this.loadArticles())
+      .then(res => this.loadSavedArticles())
       .catch(err => console.log(err));
   };
 
@@ -53,6 +56,8 @@ class Articles extends Component {
   };
 
   saveArticle = arta => {
+      console.log("saveArticle function triggered");
+      console.log('arta = ', arta);
       API.saveArticle(arta)
         .then(res => this.loadSavedArticles())
         .catch(err => console.log(err));
@@ -64,16 +69,16 @@ class Articles extends Component {
         <Row>
           <Col size="md-6">
             <Jumbotron>
-              <h1>Saved Articles</h1>
+              <div>Saved Articles</div>
             </Jumbotron>
-            {this.state.articles.length ? (
+            {this.state.saved_articles.length ? (
               <List>
-                {this.state.articles.map(article => (
+                {this.state.saved_articles.map(article => (
                   <ListItem key={article._id}>
-                    <div>
+                    <div className="article_row">
                       <strong>
                         {article.title} 
-                      </strong>
+                      </strong><br/>
                         {article.link}
                     </div>
                     <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
@@ -81,21 +86,21 @@ class Articles extends Component {
                 ))}
               </List>
             ) : (
-              <h3>No Results to Display</h3>
+              <h3>No articles have been saved!</h3>
             )}
           </Col>
           <Col size="md-6 sm-12">
             <Jumbotron>
-              <h1>New York Times Articles</h1>
+              <div>New York Times Articles</div>
             </Jumbotron>
-            {this.state.articles.length ? (
+            {this.state.scraped_articles.length ? (
               <List>
-                {this.state.articles.map(article => (
+                {this.state.scraped_articles.map(article => (
                   <ListItem key={article._id}>
-                    <div>
+                    <div className="article_row">
                       <strong>
                         {article.title} 
-                      </strong>
+                      </strong><br/>
                         {article.link}
                     </div>
                     <SaveBtn onClick={() => this.saveArticle({ 

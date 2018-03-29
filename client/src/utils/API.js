@@ -7,7 +7,8 @@ export default {
   },
   // SCRAPE
   scrape: function() {
-    return axios.get("/api/articles/scrape");
+    console.log("scrape function triggered");
+    return axios.get("/api/scrape");
   },
   getArticle: function(id) {
     return axios.get("/api/articles/" + id);
@@ -18,6 +19,7 @@ export default {
   },
   // Saves a book to the database
   saveArticle: function(articleData) {
+    console.log('API.saveArticle function triggered');
     return axios.post("/api/articles", articleData);
   }
 };

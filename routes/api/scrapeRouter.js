@@ -5,7 +5,8 @@ var path = require("path");
 
 // Matches with "/api/scrape"
 router.route("/")
-  .get((req, res) => {
+  .get(function(req, res) {
+  	console.log("reached express router /api/scrape ");
   	axios.get("https://www.npr.org/sections/news/").then(function(response) {
 	    // Then, we load that into cheerio and save it to $ for a shorthand selector
 	   const $ = cheerio.load(response.data);
