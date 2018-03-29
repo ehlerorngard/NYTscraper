@@ -3,7 +3,7 @@
 This app queries the NYT api for articles according the search parameters input by the user.  
 
 ## View the App Deployed
-[NYTscraper](url)
+[NYTscraper](https://nyreactimescraper.herokuapp.com/)
 
 ## Running the App Locally
 
@@ -19,10 +19,10 @@ yarn
 
 
 ## Technologies Used
-React
-Node
-Express
-MongoDB
-Mongoose
-Axios
+* React
+* Node
+* Express
+* MongoDB
+* Mongoose
+* Axios
 
