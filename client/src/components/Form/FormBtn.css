@@ -1,0 +1,14 @@
+.form-btn {
+  float: right;
+  color: purple;
+  font-family: "Oswald", sans;
+  font-size: 20px;
+  border: 2px solid gray;
+  border-radius: 4px;
+  padding: 6px;
+  margin: 4px;
+}
+.form-btn:hover {
+	background-color: lightgray;
+	cursor: pointer;
+}

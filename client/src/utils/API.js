@@ -6,9 +6,20 @@ export default {
     return axios.get("/api/articles");
   },
   // SCRAPE
-  scrape: function() {
+  scrapeNYT: function() {
     console.log("scrape function triggered");
-    return axios.get("/api/scrape");
+    return axios.get("/api/scrape/nyt");
+  },
+  searchNYT: function(query) {
+    const baseURL = "https://api.nytimes.com/svc/search/v2/articlesearch.json?api-key=";
+    const APIkey = "2129e7d34abf4de59fe953b5ad6f4bc0";
+    const queryTrigger = "&q=";
+    console.log('full query: '+ baseURL + APIkey + queryTrigger + query);
+    return axios.get(baseURL + APIkey + queryTrigger + query);
+  },
+  scrapeNPR: function() {
+    console.log("scrape function triggered");
+    return axios.get("/api/scrape/npr");
   },
   getArticle: function(id) {
     return axios.get("/api/articles/" + id);
