@@ -1,0 +1,22 @@
+h3 {
+	font-size: 24px;
+	font-family: "Oswald", sans;
+	margin-bottom: 50px;
+}
+form {
+	width: 100%;
+	display: block;
+}
+.disappear {
+	display: none;
+}
+.alternative {
+	font-family: "Oswald", sans;
+	color: navy;
+}
+.dateBox {
+	border: 2px solid lightgray;
+	border-radius: 5px;
+	padding: 3px;
+	margin: 5px 5px 4px 40px;
+}

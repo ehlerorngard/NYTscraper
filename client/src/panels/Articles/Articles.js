@@ -7,49 +7,52 @@ import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
+import "./Articles.css";
 
 class Articles extends Component {
   state = {
-    scraped_articles: [],
     saved_articles: [],
+    api_search_results: [],
+    begin_date: "",
+    end_date: "",
+    topic_sought: "",
     heading: "",
     body: ""
   };
 
   componentDidMount() {
-    this.scrapeNYT();
-    this.loadSavedArticles
+    this.loadSavedArticles();
   }
 
-  scrapeNYT = () => {
-    API.scrape()
-      .then(res =>
-        this.setState({ scraped_articles: res.data, heading: "", body: "" });
-        console.log("this.state.scraped_articles = ", this.state.scraped_articles);
-      )
+  searchNYT = () => {
+    let query = this.state.topic_sought
+        + "&begin_date=" + this.state.begin_date + "0101"
+        + "&end_date=" + this.state.end_date + "1231";
+
+    API.searchNYT(query)
+      .then(res => {
+        this.setState({ api_search_results: res.data.response.docs });
+      })
       .catch(err => console.log(err));
+    this.setState({
+      topic_sought: "",
+      begin_date: "",
+      end_date: ""
+    });
   };
 
   loadSavedArticles = () => {
     API.getArticles()
-      .then(res =>
+      .then(res => {
         this.setState({ saved_articles: res.data, heading: "", body: "" });
-        console.log("this.state.saved_articles = ", this.state.saved_articles);
-      )
+      })
       .catch(err => console.log(err));
   };
 
   deleteArticle = id => {
     API.deleteArticle(id)
-      .then(res => this.loadArticles())
+      .then(res => this.loadSavedArticles())
       .catch(err => console.log(err));
-  };
-
-  handleInputChange = event => {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value
-    });
   };
 
   saveArticle = arta => {
@@ -58,56 +61,119 @@ class Articles extends Component {
         .catch(err => console.log(err));
   };
 
+  convertTimestamp = timestamp => {
+    if (timestamp) {
+      let year = timestamp.substring(0,4);
+      const months = ["notamonth", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      let monthIndex = parseInt(timestamp.substring(5,7));
+      let month = months[monthIndex];
+      let day = parseInt(timestamp.substring(8, 10));
+      let fancyDate = year + " " + month + " " + day;
+
+      return fancyDate;
+    }
+    else { return ""; }
+  };
+
+  handleInputChange = event => {
+    const { name, value } = event.target;
+    this.setState({
+        [name]: value
+    });
+    if (this.state.begin_date.length >= 8) {
+      this.setState({
+        begin_date: ""
+      });
+    }
+    else if (this.state.end_date.length >= 8) {
+      this.setState({
+        end_date: ""
+      });
+    }
+
+  };
+
+  handleFormSubmit = event => {
+    event.preventDefault();
+    if (!this.state.begin_date || !this.state.end_date) {
+      console.log("do NOTHING");
+    }
+    else {
+      this.searchNYT();
+    }
+  };
+
+
   render() {
     return (
       <Container fluid>
         <Row>
-          <Col size="md-6">
+          <Col size="md-4">
             <Jumbotron>
-              <h1>Saved Articles</h1>
+              <div>Saved Articles</div>
             </Jumbotron>
-            {this.state.articles.length ? (
+            {this.state.saved_articles.length ? (
               <List>
-                {this.state.articles.map(article => (
+                {this.state.saved_articles.map(article => (
                   <ListItem key={article._id}>
-                    <div>
+                    <a className="article_row" href={article.link} target="_blank">
                       <strong>
                         {article.title} 
-                      </strong>
-                        {article.link}
-                    </div>
+                      </strong><br/>
+                        <div className="dateBox">{this.convertTimestamp(article.timestamp)}</div>
+                    </a>
                     <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
                   </ListItem>
                 ))}
               </List>
             ) : (
-              <h3>No Results to Display</h3>
+              <h3>No articles have been saved!</h3>
             )}
-          </Col>
-          <Col size="md-6 sm-12">
+          </Col> 
+          <Col size="md-3 sm-12">
             <Jumbotron>
-              <h1>New York Times Articles</h1>
+              <div className="alternative"><span className="alternative">search</span><br/> articles</div>
             </Jumbotron>
-            {this.state.articles.length ? (
+            <form>
+              <Input name="topic_sought" 
+                placeholder="topic"
+                value={this.state.topic_sought} 
+                onChange={this.handleInputChange}></Input>
+              <Input name="begin_date" 
+                value={this.state.begin_date}
+                placeholder="start year (YYYY)" 
+                onChange={this.handleInputChange}></Input>
+              <Input name="end_date" 
+                placeholder="end year (YYYY)" 
+                value={this.state.end_date}
+                onChange={this.handleInputChange}></Input>
+              <FormBtn onClick={this.handleFormSubmit}>search</FormBtn>
+            </form>
+          </Col>
+          <Col size="md-5 sm-12">
+            <Jumbotron>
+              <div>New York Times Articles</div>
+            </Jumbotron>
+              {this.state.api_search_results.length ? (
               <List>
-                {this.state.articles.map(article => (
+                {this.state.api_search_results.map(article => (
                   <ListItem key={article._id}>
-                    <div>
+                    <a className="article_row" href={article.web_url} target="_blank">
                       <strong>
-                        {article.title} 
-                      </strong>
-                        {article.link}
-                    </div>
+                        {article.snippet} 
+                      </strong><br/>
+                        <div className="dateBox">{this.convertTimestamp(article.pub_date)}</div>
+                    </a>
                     <SaveBtn onClick={() => this.saveArticle({ 
-                      title: article.title,
-                      link: article.link,
-                      date: article.date
+                      title: article.snippet,
+                      link: article.web_url,
+                      timestamp: article.pub_date
                     }) } />
                   </ListItem>
                 ))}
               </List>
             ) : (
-              <h3>No Results to Display</h3>
+              <h3>No search results to display</h3>
             )}
           </Col>
         </Row>
