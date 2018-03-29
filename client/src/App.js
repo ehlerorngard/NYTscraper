@@ -1,8 +1,6 @@
 import React from "react";
 // import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Articles from "./panels/Articles";
-import Detail from "./panels/Detail";
-import NoMatch from "./panels/NoMatch";
 import Nav from "./components/Nav";
 
 const App = () => (
